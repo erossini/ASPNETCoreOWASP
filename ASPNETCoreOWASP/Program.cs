@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Builder;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -21,22 +23,24 @@ app.Use((context, next) =>
             MustRevalidate = true,
             NoCache = true,
             NoStore = true,
-
         };
 
     context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
-    context.Response.Headers.Add("Content-Security-Policy", 
-        "default-src 'none'; " + "script-src 'self'; " + 
-        "connect-src 'self'; " + 
-        "img-src 'self'; " + 
+    context.Response.Headers.Add("Content-Security-Policy",
+        "default-src 'none'; " + "script-src 'self'; " +
+        "connect-src 'self'; " +
+        "img-src 'self'; " +
         "style-src 'self'; " +
-        "base-uri 'self'; " + 
-        "form-action 'self'; " + 
+        "base-uri 'self'; " +
+        "form-action 'self'; " +
         "frame-ancestors 'none';");
+    context.Response.Headers.Add("Referrer-Policy", "strict-origin");
+    context.Response.Headers.Add("Permissions-Policy", "geolocation=(), microphone=()");
 
     return next.Invoke();
 });
 
+app.UseHsts();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
