@@ -1,9 +1,14 @@
-using Microsoft.AspNetCore.Builder;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
+builder.Services.AddHsts(options =>
+{
+    options.Preload = true;
+    options.IncludeSubDomains = true;
+    options.MaxAge = TimeSpan.FromDays(181);
+});
 
 var app = builder.Build();
 
@@ -11,7 +16,8 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    // The default HSTS value is 30 days. You may want to change this for production scenarios,
+    // see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -40,8 +46,8 @@ app.Use((context, next) =>
     return next.Invoke();
 });
 
-app.UseHsts();
 app.UseHttpsRedirection();
+app.UseHsts();
 app.UseStaticFiles();
 
 app.UseRouting();
